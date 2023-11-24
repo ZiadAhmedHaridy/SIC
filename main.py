@@ -66,8 +66,6 @@ OPTAB = {
     "WD": ["3", "DC"]
 }
 
-
-
 if __name__ == "__main__":
     table = pd.read_csv("table.csv")
     table["Address"] = ""  # adding a new column
@@ -121,13 +119,22 @@ if __name__ == "__main__":
         if(instructions == "Start"):
             continue
         elif(instructions in OPTAB):
+            x = "0"
+            hex_values = []
             opcode = OPTAB[instructions][1]
-            opcode_binary = bin(int(opcode, 16))[2:].zfill(6)
-            print(opcode_binary)
-            print(bin(int(address, 16))[2:].zfill(15))
+            print(opcode , address)
+            opcode_binary = bin(int(opcode, 16))[2:].zfill(8)
+            address_binary = x+bin(int(address, 16))[2:].zfill(15)
             
+            combined_binary = opcode_binary  + address_binary
+            print(opcode_binary,x,address_binary)
+            for i in range(0, len(combined_binary), 4):
+                four_bits = combined_binary[i:i + 4]
+                hex_value = hex(int(four_bits, 2))[2:]  # Convert 4 bits to hex
+                hex_values.append(hex_value)
+            print(hex_values)
             
     print(table)
     print(symbol_table)
     print("length of programmer -> "+length_of_program)
-    print(object_code)
+
