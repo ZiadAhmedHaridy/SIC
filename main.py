@@ -116,10 +116,13 @@ if __name__ == "__main__":
         instructions = column["Instructions"]
         reference = column["Reference"] 
         address = column["Address"]
+        x = "0"
         if(instructions == "Start"):
             continue
         elif(instructions in OPTAB):
-            x = "0"
+            if ",X" in reference:
+                x = "1"
+       
             hex_values = []
             opcode = OPTAB[instructions][1]
             print(opcode , address)
