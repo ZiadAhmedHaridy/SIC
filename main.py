@@ -1,69 +1,78 @@
 import pandas as pd
 
-
-
 symbol_table = {}
 
 
-def parsing_location_counter(location_counter):
-    if(type(location_counter == "str")):
-        location_counter = int(location_counter)
-    elif(type(location_counter == "int")):
-        location_counter = hex(location_counter)
-    return location_counter
-         
+def pass1(table):
+     
+    
+     location_counter = (table.at[0, "Reference"])
+     starting_address = location_counter
 
-
-if __name__ == "__main__":
-    table = pd.read_csv("table.csv")
-    table["Address"] = "" #adding new column
-    location_counter = table.at[0,"Reference"]
-    starting_address= location_counter
-    print(type(location_counter))
-
-    for index,column in table.iterrows():
+     for index, column in table.iterrows():
         label = column["Labels"]
         instructions = column["Instructions"]
         reference = column["Reference"]
 
-        if(instructions == "Start"  or index == 1):
+        if instructions == "Start" or index == 1:
+            table.at[index, "Address"] = starting_address
+        elif instructions == "RESB" or instructions == "RESW":
 
-            table.at[index,"Address"] = starting_address
-            symbol_table["label"] = location_counter
-        elif(instructions == "RESB" or instructions == "RESW"):
-            
-            location_counter = parsing_location_counter(location_counter)
-            
-            table.at[index,"Address"] = location_counter 
-            
-            location_counter += int(reference)*3
-        elif(instructions == "Byte"):
-            if (reference.startswith("C'")):
+            table.at[index, "Address"] = f"{location_counter:04X}"
+
+            take_reference = int(table.at[index,"Reference"])*3
+            take_reference = hex(take_reference)
+            print(take_reference)
+            location_counter += int(f"{take_reference}",16)
+
+        elif instructions == "Byte":
+            if reference.startswith("C'"):
                 pass
-            elif(reference.startswith("X'")):
+            elif reference.startswith("X'"):
                 pass
-
-       
-        elif(index == 2):
-            location_counter = parsing_location_counter(location_counter)
-            location_counter  = 1003
-            table.at[index,"Address"] = location_counter 
-            location_counter +=3
-
+        elif index == 2:
+            location_counter = 0x1003  # Set the correct value directly in hex
+            table.at[index, "Address"] = f"{location_counter:04X}"
+            location_counter += 3
         else:
-              location_counter = parsing_location_counter(location_counter)
-              table.at[index,"Address"] = location_counter 
-              location_counter +=3
+            table.at[index, "Address"] = f"{location_counter:04X}"
+            location_counter += 3
+        table['Labels'].fillna(';', inplace=True)
+        return table
 
-    
+if __name__ == "__main__":
+    table = pd.read_csv("table.csv")
+    table["Address"] = ""  # adding a new column
+    location_counter = (table.at[0, "Reference"])
+    starting_address = location_counter
+
+    for index, column in table.iterrows():
+        label = column["Labels"]
+        instructions = column["Instructions"]
+        reference = column["Reference"]
+
+        if instructions == "Start" or index == 1:
+            table.at[index, "Address"] = starting_address
+        elif instructions == "RESB" or instructions == "RESW":
+
+            table.at[index, "Address"] = f"{location_counter:04X}"
+
+            take_reference = int(table.at[index,"Reference"])*3
+            take_reference = hex(take_reference)
+            print(take_reference)
+            location_counter += int(f"{take_reference}",16)
+
+        elif instructions == "Byte":
+            if reference.startswith("C'"):
+                pass
+            elif reference.startswith("X'"):
+                pass
+        elif index == 2:
+            location_counter = 0x1003  # Set the correct value directly in hex
+            table.at[index, "Address"] = f"{location_counter:04X}"
+            location_counter += 3
+        else:
+            table.at[index, "Address"] = f"{location_counter:04X}"
+            location_counter += 3
+        table['Labels'].fillna(';', inplace=True)
     print(table)
-
-                
-        
-          
-
-
-
-    
-
-
