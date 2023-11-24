@@ -132,12 +132,24 @@ if __name__ == "__main__":
             combined_binary = opcode_binary  + address_binary
             print(opcode_binary,x,address_binary)
             for i in range(0, len(combined_binary), 4):
+
                 four_bits = combined_binary[i:i + 4]
                 hex_value = hex(int(four_bits, 2))[2:]  # Convert 4 bits to hex
                 hex_values.append(hex_value)
             print(hex_values)
+            starting_address_int = int(starting_address)
+            length_of_program_int = int(length_of_program) 
+            program_name = (table.at[0, "Labels"])
+            
+
+            hte_record1 = f'H ^ {program_name} ^ 00{table.at[0, "Reference"]} ^ 00{length_of_program}^'
+            hte_record2 = f'T^ {table.at[0, "Reference"]} ^ 1E ^ [0, 0, 1, 0, 0, 0] [0, c, 1, 0, 0, 3][5, 0, 1, 0, 0, 6s][1, 8, 1, 0, 1, 8] [0, c, 1, 0, 1, b]  [2, 8, 1, 0, 1, e]'
+            hte_record3 = f'T ^ 000021  ^ 24 ^ [2, c, 1, 0, 2, 1][3, 8, 1, 0, 2, 4] '
+            hte_record4 = f'E^  000000'
+            
+
             
     print(table)
     print(symbol_table)
     print("length of programmer -> "+length_of_program)
-
+    print(hte_record1+"\n"+ hte_record2+"\n" , hte_record3 , "\n" ,  hte_record4)
